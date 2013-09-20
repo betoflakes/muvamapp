@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html ng-app>
+<head >
+    <title>MUVAM | Galeria </title>
+
+    <!-- Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta  charset="utf-8">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" media="screen">
+    <link rel="stylesheet" href="css/isotope.css">
+
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="js/html5shiv.js"></script>
+          <script src="js/respond.min.js"></script>
+          <![endif]-->
+      </head>
+      <body>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand">MUVAM</a>
+                <a class="btn btn-default navbar-btn col-lg-3 col-md-3 col-sm-3" onclick="window.location.href = 'index.html'" >
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Contenedor Principal -->
+        <div class="container">
+            <!-- Header Principal -->       
+
+            <!-- INTRO -->
+            <div class="row jumbotron">
+                <h2>Galeria Multiple</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, ducimus doloribus ipsam ad commodi officia est fugiat. Quisquam, facilis, cumque, earum repellendus iure vitae numquam quaerat tempora commodi doloremque eveniet.</p>
+            </div>
+            <!-- GALERIA -->
+            <ul id="filters" class="option-set" data-option-key="filter">
+                <li><em>Categoría:</em></li>
+                <li><a href="#filter" data-option-value="*" class="selected">mostrar todo</a></li>
+                <li><a href="#filter" data-option-value=".paint">pintura</a></li>
+                <li><a href="#filter" data-option-value=".photo">fotografia</a></li>
+                <li><a href="#filter" data-option-value=".exp">experimental</a></li>
+            </ul>
+            <div ng-controller="GalCtrl">
+                <div class="row jumbotron clickable variable-sizes" id="containerG" >
+                    <a ng-repeat="image in images" ng-click="setCurrentImage(image)" class="element {{image.category}}" title="{{image.title}}" data-category="{{image.category}}" data-toggle="modal" href="#myModal" data-target="#myModal">
+                        <img ng-src="{{image.thumbnail}}" alt="{{image.title}}">
+                    </a>
+                </div>
+
+                <div class="modal fade" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <img ng-src="{{currentImage.image}}" alt="{{currentImage.title}}"/>
+                                    <img ng-src="{{currentImage.extra1}}" />
+                                    <img ng-src="{{currentImage.extra2}}" />
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <h3>{{currentImage.title}}</h3>
+
+                                    <p>{{currentImage.autor}}</p>
+
+                                    <h4>Técnicas</h4>
+                                    <p>{{currentImage.tecnica}}</p>
+                                    <h4>Dimensiones</h4>
+                                    <p>{{currentImage.dimen}}</p>
+                                    <h4>Año</h4>
+                                    <p>{{currentImage.year}}</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+        <!-- jQuery & Scripts-->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script src="js/angular.min.js"></script>
+        <script src="http://jrsaucedo.com/clientes/muvam/js/galeria-app-mobile.js"></script>
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+
+        <!-- Isotope -->
+        <script src="js/jquery.isotope.min.js"></script>
+        <script>
+
+        $(function() {
+
+            var $container = $('#containerG');
+                                            // add randomish size classes
+                                            $container.find('.element').each(function() {
+                                                var $this = $(this),
+                                                number = parseInt($this.find('.number').text(), 10);
+                                                if (number % 7 % 2 === 1) {
+                                                    $this.addClass('width2');
+                                                }
+                                                if (number % 3 === 0) {
+                                                    $this.addClass('height2');
+                                                }
+                                            });
+                                            $container.isotope({
+                                                itemSelector: '.element',
+                                                // disable resizing
+                                                resizable: false,
+                                                // set columnWidth to a percentage of container width
+                                                masonry: {
+                                                    columnWidth: $container.width() / 5
+                                                },
+                                                getSortData: {
+                                                    symbol: function($elem) {
+                                                        return $elem.attr('data-symbol');
+                                                    },
+                                                    category: function($elem) {
+                                                        return $elem.attr('data-category');
+                                                    },
+                                                    number: function($elem) {
+                                                        return parseInt($elem.find('.number').text(), 10);
+                                                    },
+                                                    weight: function($elem) {
+                                                        return parseFloat($elem.find('.weight').text().replace(/[\(\)]/g, ''));
+                                                    },
+                                                    name: function($elem) {
+                                                        return $elem.find('.name').text();
+                                                    }
+                                                }
+                                            });
+                                            // update columnWidth on window resize
+                                            $(window).smartresize(function() {
+                                                $container.isotope({
+                                                    // set columnWidth to a percentage of container width
+                                                    masonry: {
+                                                        columnWidth: $container.width() / 5
+                                                    }
+                                                });
+                                            });
+                                            var $optionSets = $('.option-set'),
+                                            $optionLinks = $optionSets.find('a');
+                                            $optionLinks.click(function() {
+                                                var $this = $(this);
+                                                // don't proceed if already selected
+                                                if ($this.hasClass('selected')) {
+                                                    return false;
+                                                }
+                                                var $optionSet = $this.parents('.option-set');
+                                                $optionSet.find('.selected').removeClass('selected');
+                                                $this.addClass('selected');
+                                                // make option object dynamically, i.e. { filter: '.my-filter-class' }
+                                                var options = {},
+                                                key = $optionSet.attr('data-option-key'),
+                                                value = $this.attr('data-option-value');
+                                                // parse 'false' as false boolean
+                                                value = value === 'false' ? false : value;
+                                                options[ key ] = value;
+                                                if (key === 'layoutMode' && typeof changeLayoutMode === 'function') {
+                                                    // changes in layout modes need extra logic
+                                                    changeLayoutMode($this, options)
+                                                } else {
+                                                    // otherwise, apply new options
+                                                    $container.isotope(options);
+                                                }
+
+                                                return false;
+                                            });
+var $sortBy = $('#sort-by');
+$('#shuffle a').click(function() {
+    $container.isotope('shuffle');
+    $sortBy.find('.selected').removeClass('selected');
+    $sortBy.find('[data-option-value="random"]').addClass('selected');
+    return false;
+});
+});
+</script>
+
+
+</body>
+</html>
